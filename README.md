@@ -109,9 +109,76 @@ Topics are logical channels that enable a publish-subscribe (pub-sub) communicat
 ## Messaging System - Message Broker
 
 - 3 types:
-  - Queue-based
+  - Queue-based:
+    - Primarily used for tasks that need to be processed asynchronously in a strict order, where each message is processed once and by only one consumer.
+    - Messages are stored in a queue and delivered to consumers on a FIFO basis.
+    - Ideal for workloads like background job processing, task distribution, or asynchronous communication between services.
+    - **Examples:** RabbitMQ, Amazon SQS, ActiveMQ.
   - Cache-based
-  - Stream-based
+    - Focused on quick access and retrieval of messages/data, with less emphasis on persistent storage. These brokers are often used for scenarios where real-time speed is crucial and data doesn’t need to be retained permanently.
+    - Messages or data are stored in memory, enabling fast read and write access.
+    - Commonly used for session storage, temporary data, or low-latency messaging.
+    - Not ideal for long-term message storage since messages may be discarded when memory is cleared or when they expire.
+    - **Examples:** Redis, Memcached.
+  - Stream-based:
+    - Used for handling data that flows continuously, often from multiple sources, allowing for both real-time and historical message processing.
+    - Supports event streaming, allowing messages to be stored and replayed for multiple consumers.
+    - Often used in event-driven architectures, data processing pipelines, real-time analytics, and IoT data ingestion.
+    - Messages are usually stored in a log structure, enabling consumers to access the stream at any point.
+    - **Examples:** Apache Kafka, Amazon Kinesis, Apache Pulsar.
+
+## Poison Messages
+
+Poison Messages are messages that a system cannot process correctly, usually due to issues like invalid formatting, data corruption, or logical errors. These problematic messages cause the processing system to repeatedly fail when attempting to handle them, often leading to a loop of retries that can clog the message queue and degrade system performance.
+
+### Poison Message Handling Strategies
+-** Dead Letter Queues (DLQs):** These are dedicated queues where failed messages are moved after a set number of retries, helping isolate poison messages without blocking other messages.
+- **Backoff and Retry Mechanisms:** Implementing retry intervals that increase over time can help mitigate temporary processing issues without overwhelming the system.
+- **Message Validation:** Validate message structure and content upon receipt to filter out potential poison messages early.
+- **Error Logging and Notification:** Log details about the poison message and notify the appropriate team or system, enabling timely investigation and resolution.
+
+## Load Leveling
+
+Load Leveling is a technique used in distributed systems and cloud computing to balance the workload across resources, ensuring consistent performance even during peak demand. The goal is to prevent any single resource from becoming overwhelmed, thus maintaining steady system responsiveness and reliability.
+
+### Common Load Leveling Techniques
+- **Message Queues:** Queue-based load leveling uses message queues to store incoming tasks until resources are available to process them. Systems like RabbitMQ, Amazon SQS, and Azure Service Bus are commonly used for this.
+- **Auto-scaling:** Cloud platforms allow for auto-scaling to handle demand surges. When load increases, additional instances of services are created, and when demand decreases, they are removed, optimizing costs and resource usage.
+- **Load Balancers:** Distributing incoming traffic across multiple servers, load balancers help ensure no single server becomes a bottleneck. Tools like NGINX, AWS Elastic Load Balancer, and Azure Load Balancer manage this distribution.
+- **Throttling and Rate Limiting:** Limiting the rate of requests a system can handle at once helps prevent overload. Requests exceeding the limit are either queued or rejected, maintaining system stability.
+
+## Delivery Guarantees
+
+Delivery guarantees define how reliably a message broker ensures message delivery to its intended recipients. Each level of guarantee provides different trade-offs in terms of complexity, latency, and system reliability.
+
+### At most one (Fire and Forget)
+
+- Low latency: No need to wait for acknowledgments, making it very fast.
+- Minimal overhead: Reduced complexity due to lack of retry mechanisms.
+- Drawback: If a message is lost in transit, it won’t be resent. Suitable for cases where occasional data loss is acceptable.
+
+### At least one (Acknowledge Delivery) -> Duplicated Processing
+
+- Reliability: Ensures that every message is delivered, even if it means resending.
+- Potential for duplicate processing: Due to retries, consumers may receive the same message multiple times and should be able to handle duplicates.
+- Drawback: Increased overhead and potential for processing the same message more than once.
+
+### Exactly one (Transaction Delivery) 
+
+- High reliability and consistency: Ensures that each message is processed exactly once, with no duplicates or omissions.
+- Higher overhead: Transactional delivery mechanisms can add complexity and may impact performance.
+- Drawback: Generally more resource-intensive due to transactional mechanisms.
+
+## Transports
+
+- TCP/IP
+- HTTP
+- AMQP
+- MQTP
+- STOMP
+- Web Sockets
+
+
 
 
 
