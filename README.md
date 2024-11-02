@@ -192,7 +192,51 @@ Delivery guarantees define how reliably a message broker ensures message deliver
 - Scalability: Event-sourcing can naturally support distributed processing by decoupling write operations (event generation) from read operations (projections). Different components can independently handle events, enhancing scalability and responsiveness.
 - Resilience: Event-sourcing enhances resilience by making it possible to rebuild system state from events, even if current state representations are corrupted or lost. This is particularly useful for disaster recovery and troubleshooting.
 
+## RabbitMQ
 
+### Exchanges
+
+An exchange is responsible for receiving messages from producers and routing them to the appropriate queues. In RabbitMQ, exchanges use rules defined by their type, routing keys, and headers to determine how to route messages to one or more queues.
+
+#### Exchange Types
+
+```
+**Routing Key** is a string that the producer attaches to each message, which helps determine how the message will be routed to queues. Different exchange types handle routing keys differently.
+```
+
+```
+**Header Attributes:** are set as key-value pairs and provide additional metadata that helps route messages based on multiple attributes.
+```
+
+```
+A binding key in RabbitMQ is a string used to establish a connection (or binding) between an exchange and a queue. It defines the conditions under which a message sent to the exchange will be routed to the queue. 
+```
+
+RabbitMQ supports four main types of exchanges, each with different message routing logic:
+
+- Direct Exchange: Routes messages to queues based on an exact match between the message’s routing key and the queue’s binding key.
+  - Messages are only routed to queues whose binding key matches the message’s routing key exactly.
+  - Ideal for unicast (single-queue) messaging.
+  - Use Case: Targeting specific consumers, such as directing messages to individual services based on a unique identifier.
+  - Example: An order service can send messages with routing keys like order.created or order.canceled, routed to queues specifically listening for those events.
+
+- Fanout Exchange: Routes messages to all bound queues, ignoring any routing keys. All queues bound to a fanout exchange will receive a copy of each message sent to that exchange.
+  - Broadcasts messages to all queues without filtering.
+  - Ideal for multicast (one-to-many) messaging.
+  - Use Case: Broadcasting notifications or updates to multiple services or consumers.
+  - Example: Broadcasting stock updates to all connected clients in a trading application.
+
+- Topic Exchange: Routes messages to queues based on pattern matching between the routing key and the queue’s binding pattern, allowing for partial matches.
+  - Routing keys can include wildcard characters (* to match one word, # to match zero or more words).
+  - Flexible and powerful, supporting complex routing requirements.
+  - Use Case: Routing messages to queues based on hierarchical topics, such as logs.info, logs.error, or logs.warning.
+  - Example: In a logging system, a topic exchange could route logs.* messages to a general log queue, while logs.error routes to a separate error-specific queue.
+
+- Headers Exchange: Routes messages based on message headers rather than routing keys. Messages are routed to queues if the headers match the criteria specified in the queue’s binding.
+  - Allows more granular routing based on header attributes.
+  - Binding can specify if all headers should match (x-match=all) or if only one match is needed (x-match=any).
+  - Use Case: When routing decisions are better suited to specific attributes (e.g., priority, format) instead of a single routing key.
+  - Example: A notification system where messages are routed based on headers like priority=high or type=email.
 
 
 
