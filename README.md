@@ -132,7 +132,7 @@ Topics are logical channels that enable a publish-subscribe (pub-sub) communicat
 Poison Messages are messages that a system cannot process correctly, usually due to issues like invalid formatting, data corruption, or logical errors. These problematic messages cause the processing system to repeatedly fail when attempting to handle them, often leading to a loop of retries that can clog the message queue and degrade system performance.
 
 ### Poison Message Handling Strategies
--** Dead Letter Queues (DLQs):** These are dedicated queues where failed messages are moved after a set number of retries, helping isolate poison messages without blocking other messages.
+-**Dead Letter Queues (DLQs):** These are dedicated queues where failed messages are moved after a set number of retries, helping isolate poison messages without blocking other messages.
 - **Backoff and Retry Mechanisms:** Implementing retry intervals that increase over time can help mitigate temporary processing issues without overwhelming the system.
 - **Message Validation:** Validate message structure and content upon receipt to filter out potential poison messages early.
 - **Error Logging and Notification:** Log details about the poison message and notify the appropriate team or system, enabling timely investigation and resolution.
@@ -177,6 +177,28 @@ Delivery guarantees define how reliably a message broker ensures message deliver
 - MQTP
 - STOMP
 - Web Sockets
+
+## Event-Sourcing Architecture
+
+- Event Store: A specialized database that stores all events as immutable records in the order they occurred. It’s the central repository for events, maintaining a complete history of all changes.
+- Event: Represents a discrete change in state, such as "OrderPlaced" or "ProductAddedToCart". Events are immutable and contain the necessary information to apply a specific change.
+- Aggregate: An entity or group of related entities that are treated as a single unit for the purpose of event handling. Aggregates enforce business rules and validation to ensure data consistency before creating new events.
+- Event Handler: Listens for specific events and performs actions in response, often responsible for applying the state changes represented by the event to the aggregat
+- Projection: A read-optimized view of the data created by transforming events into a format suited for querying and display. Projections enable efficient querying of the current state without reapplying all events.
+
+**Benefits of Event-Sourcing Architecture**
+- Complete audit trail: Every change is captured as an event, creating an immutable log of all state transitions. This allows for a complete audit trail, enabling traceability and accountability for any change.
+- Temporal querying: Since every state change is recorded, you can "replay" events to see the system's state at any point in time. This enables historical analysis, debugging, and insights into how the system evolved.
+- Scalability: Event-sourcing can naturally support distributed processing by decoupling write operations (event generation) from read operations (projections). Different components can independently handle events, enhancing scalability and responsiveness.
+- Resilience: Event-sourcing enhances resilience by making it possible to rebuild system state from events, even if current state representations are corrupted or lost. This is particularly useful for disaster recovery and troubleshooting.
+
+
+
+
+
+
+
+
 
 
 
