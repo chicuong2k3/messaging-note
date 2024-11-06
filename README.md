@@ -200,17 +200,11 @@ An exchange is responsible for receiving messages from producers and routing the
 
 #### Exchange Types
 
-```
-**Routing Key** is a string that the producer attaches to each message, which helps determine how the message will be routed to queues. Different exchange types handle routing keys differently.
-```
+> **Routing Key** is a string that the producer attaches to each message, which helps determine how the message will be routed to queues. Different exchange types handle > > routing keys differently.
 
-```
-**Header Attributes:** are set as key-value pairs and provide additional metadata that helps route messages based on multiple attributes.
-```
+> **Header Attributes:** are set as key-value pairs and provide additional metadata that helps route messages based on multiple attributes.
 
-```
-A binding key in RabbitMQ is a string used to establish a connection (or binding) between an exchange and a queue. It defines the conditions under which a message sent to the exchange will be routed to the queue. 
-```
+> A binding key in RabbitMQ is a string used to establish a connection (or binding) between an exchange and a queue. It defines the conditions under which a message sent > > to the exchange will be routed to the queue. 
 
 RabbitMQ supports four main types of exchanges, each with different message routing logic:
 
@@ -239,7 +233,9 @@ RabbitMQ supports four main types of exchanges, each with different message rout
   - Example: A notification system where messages are routed based on headers like priority=high or type=email.
 
 
+### Integration Patterns
 
+#### File Based Integration 
 
 
 
